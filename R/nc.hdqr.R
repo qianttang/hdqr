@@ -1,4 +1,4 @@
-#' Solve the Elastic Net Penalized Quantile Regression with Nonconvex Penalties
+#' Solve the Penalized Quantile Regression with Nonconvex Penalties
 #'
 #' This function fits the penalized quantile regression model using nonconvex penalties 
 #' such as SCAD or MCP. It allows for flexible control over the regularization parameters and 

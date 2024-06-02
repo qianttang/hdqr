@@ -30,18 +30,6 @@
 #' @param lam2 Regularization parameter \code{lambda2} for the
 #'   quadratic penalty of the coefficients. Unlike \code{lambda},
 #'   only one value of \code{lambda2} is used for each fitting process.
-#' @param pf L1 penalty factor of length \eqn{p} used for the adaptive
-#'   LASSO or adaptive elastic net. Separate L1 penalty weights can be
-#'   applied to each coefficient to allow different L1 shrinkage.
-#'   Can be 0 for some variables (but not all), which imposes no
-#'   shrinkage, and results in that variable always being included
-#'   in the model. Default is 1 for all variables (and implicitly
-#'   infinity for variables in the \code{exclude} list).
-#' @param pf2 L2 penalty factor of length \eqn{p} used for adaptive
-#'   elastic net. Separate L2 penalty weights can be applied to
-#'   each coefficient to allow different L2 shrinkage.
-#'   Can be 0 for some variables, which imposes no shrinkage.
-#'   Default is 1 for all variables.
 #' @param exclude Indices of variables to be excluded from the model.
 #'   Default is none. Equivalent to an infinite penalty factor.
 #' @param dfmax The maximum number of variables allowed in the model.
@@ -55,7 +43,7 @@
 #' @param standardize Logical flag for variable standardization,
 #'   prior to fitting the model sequence. The coefficients are
 #'   always returned to the original scale. Default is \code{TRUE}.
-#' @param hval The smoothing index for \code{method='huber'}. Default is 0.125.
+#' @param hval The smoothing index for \code{method='huber'}. Default is 0.125^2.
 #' @param eps Stopping criterion.
 #' @param maxit Maximum number of iterates.
 #' @param sigma Penalty parameter appearing in the quadratic term
@@ -66,10 +54,12 @@
 #' Note that the objective function in the penalized quantile
 #' regression is
 #'   \deqn{1'\rho_{\tau}(y-X\beta-b_0))/N + \lambda_1\cdot|pf_1\circ\beta|_1 +
-#'     0.5*\lambda_2\cdot|\sqrt{pf_2}\circ\beta|^2,}
-#'   where \eqn{\rho_{\tau}} the quantile or check loss
+#'     0.5*\lambda_2\cdot|\sqrt{pf_2}\circ\beta|^2,}{
+#'     1'\rho[\tau](y-X\beta))/N + \lambda[1]*|pf1•\beta|[1]
+#'     + 0.5*\lambda_{2}*|\sqrtpf2•\beta|^2,}
+#'   where \eqn{\rho_{\tau}}{\rho_{\tau}} the quantile or check loss
 #'   and the penalty is a combination of weighted L1 and L2 terms and
-#'   \eqn{\circ} denotes the Hadmamard product.
+#'   \eqn{\circ}{•} denotes the Hadmamard product.
 #'
 #' For faster computation, if the algorithm is not converging or
 #' running slow, consider increasing \code{eps}, increasing
@@ -94,22 +84,11 @@
 #' @keywords quantile regression
 #' @useDynLib hdqr, .registration=TRUE
 #' @export
-#' @examples
-#' set.seed(315)
-#' n <- 100
-#' p <- 400
-#' x <- matrix(data = rnorm(n * p, mean = 0, sd = 1), nrow = n, ncol = p)
-#' beta_star <- c(c(2, 1.5, 0.8, 1, 1.75, 0.75, 0.3), rep(0, (p - 7)))
-#' eps <- rnorm(n, mean = 0, sd = 1)
-#' y <- x %*% beta_star + eps
-#' tau <- 0.5
-#' lam2 <- 0.01
-#' fit <- hdqr(x = x, y = y, tau = tau, lam2 = lam2)
 
-hdqr <- function(x, y, tau, nlambda=100, lambda.factor=ifelse(nobs < nvars, 0.01, 1e-04), 
+hdqr.class <- function(x, y, tau, nlambda=100, lambda.factor=ifelse(nobs < nvars, 0.01, 1e-04), 
     lambda=NULL, lam2=0, hval=.125, pf=rep(1, nvars), pf2=rep(1, nvars), 
     exclude, dfmax=nvars + 1, pmax=min(dfmax * 1.2, nvars), standardize=TRUE, 
-    eps=1e-08, maxit=1e+06, sigma=0.05, is_exact=FALSE) {
+    eps=1e-08, maxit=1e+06, sigma=0.05) {
   ####################################################################
   this.call = match.call()
   y = drop(y)
@@ -117,6 +96,7 @@ hdqr <- function(x, y, tau, nlambda=100, lambda.factor=ifelse(nobs < nvars, 0.01
   np = dim(x)
   nobs = as.integer(np[1])
   nvars = as.integer(np[2])
+  ntau = as.integer(length(tau))
   vnames = colnames(x)
   if (is.null(vnames)) 
     vnames = paste0("V", seq(nvars))
@@ -178,22 +158,26 @@ hdqr <- function(x, y, tau, nlambda=100, lambda.factor=ifelse(nobs < nvars, 0.01
   if (length(pf2) != nvars) 
     stop("The size of L2 penalty factor must be the same with the number of input variables.")
   pf2 = as.double(pf2)
-
+  beta <- array(0, c(ntau, pmax, nlam))
   ####################################################################
-  fit = .Fortran("lqr_hd", alpha, lam2, hval, nobs, nvars, 
-    as.double(x), as.double(y), as.double(tau), jd, pfncol, pf, pf2, dfmax, 
+  fit = .Fortran("qr_class", alpha, lam2, hval, nobs, nvars, 
+    as.double(x), as.double(y), as.double(tau), ntau, jd, pfncol, pf, pf2, dfmax, 
     pmax, nlam, flmin, ulam, eps, isd, maxit, 
-    nalam=integer(1), b0=double(nlam), 
-    beta=double(pmax * nlam), ibeta=integer(pmax), 
-    nbeta=integer(nlam), alam=double(nlam), npass=integer(nlam), jerr=integer(1),
-    sigma=as.double(sigma), is_exact=as.integer(is_exact), PACKAGE="hdqr")
-  outlist = getoutput(fit, maxit, pmax, nvars, vnames)
-  fit = c(outlist, list(npasses = fit$npass, jerr = fit$jerr))
-  if (is.null(lambda)) 
-    fit$lambda = lamfix(fit$lambda)
-  fit$call = this.call
-  ####################################################################
-  class(fit) = c("hdqr")
+    nalam=integer(1), b0=double(ntau * nlam), 
+    beta=as.double(beta), ibeta=integer(pmax), 
+    nbeta=integer(ntau * nlam), alam=double(ntau * nlam), npass=integer(ntau * nlam), 
+    jerr=integer(1), sigma=as.double(sigma), PACKAGE="hdqr")
+  # outlist = getoutput(fit, maxit, pmax, nvars, vnames) ! rewrite getoutput
+  # fit = c(outlist, list(npasses = fit$npass, jerr = fit$jerr))
+  # fit$call = this.call
+  # ####################################################################
+  # class(fit) = c("hdqr.class")
+  beta = array(fit$beta[seq(ntau * pmax * nlam)], c(ntau, pmax, nlam))
+  b0 = matrix(fit$b0[seq(ntau * nlam)], ntau, nlam)
+  fit=list(beta=beta, b0=b0, tau=tau)
+  # if (is.null(lambda)) 
+  fit$lambda = ulam
+  class(fit) = c("hdqr.class")
   fit
-} 
 
+} 

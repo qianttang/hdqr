@@ -2,7 +2,7 @@
 % Please edit documentation in R/nc.hdqr.R
 \name{nc.hdqr}
 \alias{nc.hdqr}
-\title{Solve the Elastic Net Penalized Quantile Regression with Nonconvex Penalties}
+\title{Solve the Penalized Quantile Regression with Nonconvex Penalties}
 \usage{
 nc.hdqr(
   x,

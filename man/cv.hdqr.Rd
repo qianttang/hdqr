@@ -2,8 +2,7 @@
 % Please edit documentation in R/qrcv.R
 \name{cv.hdqr}
 \alias{cv.hdqr}
-\title{Cross-validation for Selecting the Tuning Parameter in Elastic Net Penalized
-Quantile Regression}
+\title{Cross-validation for Selecting the Tuning Parameter in Penalized Quantile Regression}
 \usage{
 cv.hdqr(x, y, lambda = NULL, tau, nfolds = 5L, foldid, ...)
 }
@@ -25,9 +24,7 @@ If provided, it overrides \code{nfolds}.}
 \item{...}{Additional arguments passed to \code{\link{hdqr}}.}
 }
 \value{
-Returns an object of class \code{cv.hdqr}, which is a list with components that describe 
-the cross-validation results:
-\describe{
+An object with S3 class \code{cv.hdqr} consisting of
   \item{lambda}{Candidate \code{lambda} values.}
   \item{cvm}{Mean cross-validation error.}
   \item{cvsd}{Standard error of the mean cross-validation error.}
@@ -40,9 +37,8 @@ the cross-validation results:
   \item{hdqr.fit}{a fitted \code{\link{hdqr}} object for the full data.}
   \item{nzero}{Number of non-zero coefficients at each \code{lambda}.}
 }
-}
 \description{
-Performs k-fold cross-validation for \code{\link{hdqr}}, similar to \code{\link[glmnet]{cv.glmnet}}.
+Performs k-fold cross-validation for \code{\link{hdqr}}.
 }
 \details{
 This function computes the average cross-validation error and provides the standard error.

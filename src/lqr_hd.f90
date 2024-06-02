@@ -670,8 +670,6 @@
                IF(hval_id .EQ. hval_len) EXIT
                hval = 0.125D0 * hval
             ENDDO loop_hval
-            ! CALL INTPR("l", -1, l, 1)
-            ! CALL INTPR("h_id", -1, hval_id, 1)
 !---------- final update variable save results ------------------
             IF (ni > pmax) THEN
                jerr = - 10000 - l

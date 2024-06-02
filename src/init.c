@@ -11,9 +11,16 @@ extern void F77_NAME(lqr_hd)(double *alpha, double *lam2, double *hval,
   double *b0, double *beta, int *ibeta, int *nbeta, double *alam, 
   int *npass, int *jerr, double *sigma, int *is_exact);
 
+extern void F77_NAME(qr_class)(double *alpha, double *lam2, double *hval, 
+  int *nobs, int *nvars, double *x, double *y, double *utau, int *ntau,
+  int *jd, int *pfncol, double *pf, double *pf2, int *dfmax, int *pmax, 
+  int *nlam, double *flmin, double *ulam, double *eps, int *isd, int *maxit, 
+  int *nalam, double *b0, double *beta, int *ibeta, int *nbeta, double *alam, 
+  int *npass, int *jerr, double *sigma);
 
 static const R_FortranMethodDef FortranEntries[] = {
     {"lqr_hd",         (DL_FUNC) &F77_SUB(lqr_hd),         30},
+    {"qr_class",       (DL_FUNC) &F77_SUB(qr_class),       30},
     {NULL, NULL, 0}
 };
 

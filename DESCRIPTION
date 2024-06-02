@@ -10,7 +10,7 @@ Authors@R: c(
 Maintainer: Qian Tang <qian-tang@uiowa.edu>
 Description: Implements an efficient algorithm to fit and tune penalized quantile regression models using the generalized coordinate descent algorithm. This package is designed to handle large datasets effectively, with emphasis on precision and computational efficiency.
 Depends: R (>= 3.5.0)
-Imports: stats, utils, Matrix, methods
+Imports: stats, Matrix, methods
 License: GPL-2
 NeedsCompilation: yes
 Encoding: UTF-8
