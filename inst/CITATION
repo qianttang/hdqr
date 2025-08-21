@@ -1,0 +1,11 @@
+bibentry(bibtype = "Inproceedings",
+  title        = "Finite Smoothing Algorithm for High-Dimensional Support Vector Machines and Quantile Regression",
+  author       = c(person(given = "Qian", family = "Tang"),
+                   person(given = "Yikai", family = "Zhang"),
+                   person(given = "Boxiang", family = "Wang")),
+  booktitle    = "Forty-first International Conference on Machine Learning",
+  year         = "2024",
+  url	       = "https://openreview.net/forum?id=RvwMTDYTOb",
+  header       = "To cite hdqr in publications use:"
+)
+

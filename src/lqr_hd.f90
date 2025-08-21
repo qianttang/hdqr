@@ -1,12 +1,12 @@
 ! --------------------------------------------------------------------------
-! dcsvm_unif.f90: the algorithm for the sparse SVM using uniform kernel convolution. 
+! lqr_hd.f90: the algorithm for the sparse quantile regression
 ! --------------------------------------------------------------------------
 !
 ! USAGE:
 ! 
-! call dcsvm_unif (alpha, lam2, hval, nobs, nvars, x, y, jd, pfncol, pf, & 
-! & pf2, dfmax, pmax, nlam, flmin, ulam, eps, isd, maxit, istrong, nalam, & 
-! & b0, beta, ibeta, nbeta, alam, npass, jerr, istrong) 
+! call lqr_hd (alpha, lam2, hval, nobs, nvars, x, y, tau, jd, & 
+!     & pfncol, pf, pf2, dfmax, pmax, nlam, flmin, ulam, eps, isd, maxit, &
+!     & nalam, b0, beta, ibeta, nbeta, alam, npass, jerr, sigma, is_exact) 
 !
 ! INPUT ARGUMENTS:
 ! 
@@ -84,13 +84,13 @@
 
          IMPLICIT NONE
 !------- arg types ----------------------------------------------
-         INTEGER :: nobs, nvars, nlam, nalam, maxit, dfmax, pmax, pfncol, nwdel, nhval(nlam)
-         INTEGER :: isd, npass(nlam), jerr, jd (*), ibeta (pmax), nbeta(nlam), ndel, is_exact
+         INTEGER :: nobs, nvars, nlam, nalam, maxit, dfmax, pmax, pfncol
+         INTEGER :: isd, npass(nlam), jerr, jd (*), ibeta (pmax), nbeta(nlam), is_exact
          DOUBLE PRECISION :: alpha, lam2, hval, flmin, eps, tau
          DOUBLE PRECISION :: x (nobs, nvars), y (nobs), sigma
          DOUBLE PRECISION :: pf (nvars, pfncol), pf2 (nvars)
-         DOUBLE PRECISION :: ulam (nlam), alam (nlam), projeps, hvaleps
-         DOUBLE PRECISION :: beta (pmax, nlam), b0 (nlam), KKTeps, wdelta
+         DOUBLE PRECISION :: ulam (nlam), alam (nlam)
+         DOUBLE PRECISION :: beta (pmax, nlam), b0 (nlam)
          
 !------- local declarations -------------------------------------
          INTEGER :: j, l, nk, ju (nvars)
@@ -133,7 +133,7 @@
             b0(l) = b0(l) - Dot_product (beta(1:nk, l), &
            & xmean(ibeta(1:nk)))
          ENDDO
-         RETURN
+
       END SUBROUTINE lqr_hd
 
       SUBROUTINE lqr_path (alpha, lam2, hval, maj, mval, nobs, nvars, &
@@ -159,20 +159,25 @@
          DOUBLE PRECISION :: d, dif, oldb, u, v, al, alf, hinv
          DOUBLE PRECISION :: dl (nobs), r (nobs), onemh, oneph
          DOUBLE PRECISION :: b (0:nvars), oldbeta (0:nvars)
-         INTEGER :: i, k, j, l, ctr, ni, me, mnl, mm (nvars), pfl
+         INTEGER :: i, k, j, l, ni, me, mnl, mm (nvars), pfl
 !------- local declarations for the projection -----------------
          ! INTEGER, PARAMETER :: hval_len 
-         INTEGER :: jx, hval_id, tt, hval_len=4, mproj = 1, mp
+         INTEGER :: hval_id, hval_len=4, mproj = 1, mp
          DOUBLE PRECISION :: ga (nvars), vl (nvars), al0, maj0(nvars)
          DOUBLE PRECISION :: ka(nobs), bb, obj1, obj0, b00, dif0, hvaleps
          INTEGER :: eset(nvars), sset(nobs), si, ss (nobs)
          DOUBLE PRECISION :: xb, xk2, mb, mb0, theta(nobs), delta
-         DOUBLE PRECISION :: ytmp(nobs), quantile, d_kkt, dif_kkt, st
-         DOUBLE PRECISION :: sx(nvars), uo, obj, ab, KKTeps, projeps
-         DOUBLE PRECISION :: ap(nvars), plm(nvars)
+         DOUBLE PRECISION :: quantile, d_kkt, dif_kkt
+         DOUBLE PRECISION :: sx(nvars), uo, ab, KKTeps, projeps
+         ! DOUBLE PRECISION :: ap(nvars), plm(nvars)
 !------- some initial setup ------------------------------------- 
          al = 0.0D0
+         al0 = 0.0D0
+         sx = 0.0D0
+         oldb = 0.0D0
+         dl = 0.0D0
          r = y
+         d = 0.0D0
          b = 0.0D0
          oldbeta = 0.0D0
          m = 0
@@ -195,10 +200,12 @@
          ka = 0.0D0
          bb = 0.0D0
          ab = 0.0D0
+         dif0 = 0.0D0
          KKTeps = 1e-3   
          ss = 0
          projeps = nobs * eps
          hvaleps = 1e-6
+         uo = 0.0D0
 !---------- lambda loop -----------------------------------------
          mnl = Min (MNLAM, nlam)
          IF (flmin < 1.0D0) THEN
@@ -206,13 +213,13 @@
             alf = flmin ** (1.0D0 / (nlam - 1.0D0))
          ENDIF
          !find the quantile 
-         CALL objfun(b(0), bb, ab, ka, y, 0.0D0, 0.0D0, nobs, nvars, tau, obj0)
-         CALL opt_int(-1.0D2, 1.0D2, nobs, nvars, ab, ka, bb, y, 0.0D0, 0.0D0, &
+         CALL objfun(b(0), bb, ab, ka, y, 0.0D0, 0.0D0, nobs, tau, obj0)
+         CALL opt_int(-1.0D2, 1.0D2, nobs, ab, ka, bb, y, 0.0D0, 0.0D0, &
             & tau, obj1, b00)
          quantile = b00
 
          vl = 0.0D0
-         CALL lqr_drv (nobs, nvars, x, y, tau, y-quantile, vl, 1/1.0D-9, -1.0D-9, 1.0D-9)
+         CALL lqr_drv (nobs, nvars, x, tau, y-quantile, vl, -1.0D-9, 1.0D-9)
          ga = Abs (vl)
 
          IF (pfncol == 1) THEN 
@@ -290,8 +297,6 @@
                      IF (ju(k) /= 0) THEN
                         oldb = b(k)                
                         u = 0.0D0
-                        plm(k) = pf2(k) * lam2 + maj(k)
-                        ap(k) = al * pf(k, pfl)
 
                         DO i = 1, nobs   
                            IF (r(i) < onemh) THEN
@@ -305,10 +310,10 @@
                         ENDDO 
 
                         u = maj(k) * b(k) - u / nobs 
-                        v = Abs (u) - ap(k)
+                        v = Abs (u) - al * pf(k, pfl)
                     
                         IF (v > 0.0D0) THEN
-                           b(k) = Sign (v, u) / plm(k)
+                           b(k) = Sign (v, u) / (pf2(k) * lam2 + maj(k))
                         ELSE
                            b(k) = 0.0D0
                         ENDIF
@@ -374,10 +379,10 @@
                            u = u + dl(i) * x(i, k)
                         ENDDO         
                         u = maj(k) * b(k) - u / nobs
-                        v = Abs (u) - ap(k)
+                        v = Abs (u) - al * pf(k, pfl)
                           
                         IF (v > 0.0D0) THEN
-                           b(k) = Sign (v, u) / plm(k)
+                           b(k) = Sign (v, u) / (pf2(k) * lam2 + maj(k))
                         ELSE
                            b(k) = 0.0D0
                         ENDIF
@@ -422,8 +427,8 @@
                ab = SUM(abs(b(1:nvars)))
                ka = y-r-b(0)
                bb = Dot_product(b(1:nvars), b(1:nvars))
-               CALL objfun(b(0), bb, ab, ka, y, al, lam2, nobs, nvars, tau, obj0)
-               CALL opt_int(-1.0D2, 1.0D2, nobs, nvars, ab, ka, bb, y, al, lam2, &
+               CALL objfun(b(0), bb, ab, ka, y, al, lam2, nobs, tau, obj0)
+               CALL opt_int(-1.0D2, 1.0D2, nobs, ab, ka, bb, y, al, lam2, &
                   & tau, obj1, b00)
 
                IF (obj1 < obj0) THEN
@@ -437,25 +442,25 @@
                dif = Maxval(Abs(oldbeta(m(1:ni)) - b(m(1:ni))))
                ! check KKT
                d_kkt = 0.0D0
-               dif_kkt= 0.0D0
-               CALL lqr_drv (nobs, nvars, x, y, tau, r, vl, 1/1.0D-12, -1.0D-12, 1.0D-12)
-               DO j = 1, nobs
+               dif_kkt = 0.0D0
+               CALL lqr_drv (nobs, nvars, x, tau, r, vl, -1.0D-12, 1.0D-12)
+               DO j = 1, nvars
                   IF (Abs(b(j)) > 0) THEN
                      u = vl(j) + lam2 * pf2(j) * b(j)
-                     v = Abs(u) - ap(j)
+                     v = Abs(u) - al * pf(j, pfl)
                      d_kkt = sign(v, u)
                   ELSE 
-                     v = Abs(vl(j)) - ap(j)
+                     v = Abs(vl(j)) - al * pf(j, pfl)
                      IF(v > 0.0D0) d_kkt = v
                   ENDIF
                   IF (d_kkt /= 0.0D0) dif_kkt = Max(dif_kkt, d_kkt * d_kkt)
                ENDDO
 
-               uo = Max(ulam(l), 1.0D0)
+               uo = Max(al, 1.0D0)
                IF (dif_kkt * dif_kkt/ uo / uo < KKTeps) THEN
                  IF (dif * dif < hvaleps) EXIT
                ENDIF 
-               
+
                IF (is_exact .EQ. 0) THEN
                  EXIT
                ELSEIF (hval < 0.125**2) THEN
@@ -512,14 +517,14 @@
                                        & sigma * r(sset(1:si))) + sigma * sx(k) * b(k)
                                  ENDIF
                                  u = mb + maj(k) * b(k) - u / nobs 
-                                 v = Abs (u) - ap(k)
+                                 v = Abs (u) - al * pf(k, pfl)
                              
                                  IF (v > 0.0D0) THEN
                                     IF(si > 0) THEN
-                                       b(k) = Sign (v, u) / (plm(k) + &
+                                       b(k) = Sign (v, u) / ((pf2(k) * lam2 + maj(k)) + &
                                           & sigma * sx(k)) 
                                     ELSE
-                                       b(k) = Sign (v, u) / plm(k) 
+                                       b(k) = Sign (v, u) / (pf2(k) * lam2 + maj(k))
                                     ENDIF
                                  ELSE
                                     b(k) = 0.0D0
@@ -606,14 +611,14 @@
                                        & sigma * r(sset(1:si))) + sigma * sx(k) * b(k)
                                  ENDIF              
                                  u = mb + maj(k) * b(k) - u / nobs
-                                 v = Abs (u) - ap(k)
+                                 v = Abs (u) - al * pf(k, pfl)
                                    
                                  IF (v > 0.0D0) THEN
                                     IF(si > 0) THEN
-                                       b(k) = Sign (v, u) / (plm(k) + &
+                                       b(k) = Sign (v, u) / ((pf2(k) * lam2 + maj(k))+ &
                                           & sigma * sx(k)) 
                                     ELSE
-                                       b(k) = Sign (v, u) / plm(k) 
+                                       b(k) = Sign (v, u) / (pf2(k) * lam2 + maj(k))
                                     ENDIF
                                  ELSE
                                     b(k) = 0.0D0
@@ -685,15 +690,15 @@
             me = Count (beta(1:ni, l) /= 0.0D0)
             IF (me > dfmax) EXIT
          ENDDO loop_lambda
-         RETURN
+
       END SUBROUTINE lqr_path
       
-      SUBROUTINE lqr_drv (nobs, nvars, x, y, tau, r, vl, hinv, onemh, oneph)
+      SUBROUTINE lqr_drv (nobs, nvars, x, tau, r, vl, onemh, oneph)
          IMPLICIT NONE
          INTEGER :: nobs, nvars, i
-         DOUBLE PRECISION :: x (nobs, nvars), y (nobs), tau
-         DOUBLE PRECISION :: ninv, hinv, onemh, oneph
-         DOUBLE PRECISION :: r (nobs), vl (nvars), dl (nobs), dly (nobs)
+         DOUBLE PRECISION :: x (nobs, nvars), tau
+         DOUBLE PRECISION :: ninv, onemh, oneph
+         DOUBLE PRECISION :: r (nobs), vl (nvars), dl (nobs)
          vl = 0.0D0
          dl = 0.0D0
          ninv = 1.0D0 / nobs

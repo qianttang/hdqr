@@ -107,7 +107,7 @@
 #' fit <- hdqr(x = x, y = y, tau = tau, lam2 = lam2)
 
 hdqr <- function(x, y, tau, nlambda=100, lambda.factor=ifelse(nobs < nvars, 0.01, 1e-04), 
-    lambda=NULL, lam2=0, hval=.125, pf=rep(1, nvars), pf2=rep(1, nvars), 
+    lambda=NULL, lam2=0.01, hval=.125, pf=rep(1, nvars), pf2=rep(1, nvars), 
     exclude, dfmax=nvars + 1, pmax=min(dfmax * 1.2, nvars), standardize=TRUE, 
     eps=1e-08, maxit=1e+06, sigma=0.05, is_exact=FALSE) {
   ####################################################################
@@ -178,7 +178,6 @@ hdqr <- function(x, y, tau, nlambda=100, lambda.factor=ifelse(nobs < nvars, 0.01
   if (length(pf2) != nvars) 
     stop("The size of L2 penalty factor must be the same with the number of input variables.")
   pf2 = as.double(pf2)
-
   ####################################################################
   fit = .Fortran("lqr_hd", alpha, lam2, hval, nobs, nvars, 
     as.double(x), as.double(y), as.double(tau), jd, pfncol, pf, pf2, dfmax, 

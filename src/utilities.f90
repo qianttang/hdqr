@@ -57,7 +57,7 @@ SUBROUTINE KKTcheckloo2(nobs, ninv, n, loor, ya, KKTtol, KKTvals)
     ENDIF
   ENDDO
   KKTvals = Sum(KKTval * KKTval)
-  CALL DBLEPR("KKTval", -1, KKTval, nobs)
+  ! CALL DBLEPR("KKTval", -1, KKTval, nobs)
 END SUBROUTINE KKTcheckloo2
 
 
@@ -246,11 +246,11 @@ SUBROUTINE pnorm(qval, pval)
       ENDIF
 END SUBROUTINE pnorm      
 
-SUBROUTINE objfun(intcpt, bb, ab, ka, y, lam1, lam2, nobs, nvars, tau, objval) !change
+SUBROUTINE objfun(intcpt, bb, ab, ka, y, lam1, lam2, nobs, tau, objval) !change
   IMPLICIT NONE
-  INTEGER :: nobs, j, nvars
+  INTEGER :: nobs, j
   DOUBLE PRECISION :: intcpt, bb, ka (nobs), y (nobs), lam1, objval, lam2
-  DOUBLE PRECISION :: fh (nobs), xi (nobs), xi_tmp, tau, del, ttau, ab
+  DOUBLE PRECISION :: fh (nobs), xi (nobs), xi_tmp, tau, ttau, ab
   xi = 0.0D0
   !check loss
   DO j = 1, nobs
@@ -268,12 +268,12 @@ SUBROUTINE objfun(intcpt, bb, ab, ka, y, lam1, lam2, nobs, nvars, tau, objval) !
 END SUBROUTINE objfun
 
 ! This code is partially modified from fmim.c from in the source code of R
-SUBROUTINE opt_int(lmin, lmax, nobs, nvars, ab, ka, bb, y, lam1, lam2, &
+SUBROUTINE opt_int(lmin, lmax, nobs, ab, ka, bb, y, lam1, lam2, &
   & tau, objval, lhat)
   IMPLICIT NONE
-  INTEGER :: nobs, nvars
+  INTEGER :: nobs
   DOUBLE PRECISION :: lmin, lmax, lhat, objval, ka (nobs), bb, y (nobs), lam1, tau
-  DOUBLE PRECISION :: a, b, d, e, p, q, r, u, v, w, x, del, ab, lam2
+  DOUBLE PRECISION :: a, b, d, e, p, q, r, u, v, w, x, ab, lam2
   DOUBLE PRECISION :: t2, fu, fv, fw, fx, xm, tol, tol1, tol3
   REAL(KIND = SELECTED_REAL_KIND(10, 99)) :: eps
   DOUBLE PRECISION, PARAMETER :: gold = (3.0D0 - Sqrt(5.0D0)) * 0.5D0
@@ -293,7 +293,7 @@ SUBROUTINE opt_int(lmin, lmax, nobs, nvars, ab, ka, bb, y, lam1, lam2, &
   d = 0.0D0
   e = 0.0D0
   objval = 0.0D0
-  CALL objfun(x, bb, ab, ka, y, lam1, lam2, nobs, nvars, tau, objval)
+  CALL objfun(x, bb, ab, ka, y, lam1, lam2, nobs, tau, objval)
   fx = objval
   fv = fx
   fw = fx
@@ -348,7 +348,7 @@ SUBROUTINE opt_int(lmin, lmax, nobs, nvars, ab, ka, bb, y, lam1, lam2, &
     ENDIF
 
     objval = 0.0D0
-    CALL objfun(u, bb, ab, ka, y, lam1, lam2, nobs, nvars, tau, objval)
+    CALL objfun(u, bb, ab, ka, y, lam1, lam2, nobs, tau, objval)
     fu = objval
 
     IF (fu .LE. fx) THEN
@@ -384,7 +384,7 @@ SUBROUTINE opt_int(lmin, lmax, nobs, nvars, ab, ka, bb, y, lam1, lam2, &
   ENDDO main_loop
   lhat = x
   objval = 0.0D0
-  CALL objfun(x, bb, ab, ka, y, lam1, lam2, nobs, nvars, tau, objval)
+  CALL objfun(x, bb, ab, ka, y, lam1, lam2, nobs, tau, objval)
 
 END SUBROUTINE opt_int
 

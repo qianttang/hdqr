@@ -12,7 +12,7 @@ hdqr(
   nlambda = 100,
   lambda.factor = ifelse(nobs < nvars, 0.01, 1e-04),
   lambda = NULL,
-  lam2 = 0,
+  lam2 = 0.01,
   hval = 0.125,
   pf = rep(1, nvars),
   pf2 = rep(1, nvars),
