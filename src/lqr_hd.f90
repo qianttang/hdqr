@@ -133,7 +133,7 @@
             b0(l) = b0(l) - Dot_product (beta(1:nk, l), &
            & xmean(ibeta(1:nk)))
          ENDDO
-
+         RETURN
       END SUBROUTINE lqr_hd
 
       SUBROUTINE lqr_path (alpha, lam2, hval, maj, mval, nobs, nvars, &
@@ -690,7 +690,7 @@
             me = Count (beta(1:ni, l) /= 0.0D0)
             IF (me > dfmax) EXIT
          ENDDO loop_lambda
-
+         RETURN
       END SUBROUTINE lqr_path
       
       SUBROUTINE lqr_drv (nobs, nvars, x, tau, r, vl, onemh, oneph)

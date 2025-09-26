@@ -1,6 +1,6 @@
 #' Cross-validation for Selecting the Tuning Parameter of Nonconvex Penalized Quantile Regression
 #'
-#' Conducts k-fold cross-validation for the `nc.hdqr()` function.
+#' Conducts k-fold cross-validation for the \code{nc.hdqr} function.
 #'
 #' @param x A numerical matrix with dimensions (\eqn{n} rows and \eqn{p} columns), where each row represents an observation.
 #' @param y Response variable.

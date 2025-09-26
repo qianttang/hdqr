@@ -2,33 +2,33 @@
 % Please edit documentation in R/nc.hdqr-methods.R
 \name{coef.nc.hdqr}
 \alias{coef.nc.hdqr}
-\title{Extract Model Coefficients from a `nc.hdqr` Object}
+\title{Extract Model Coefficients from a \code{nc.hdqr} Object}
 \usage{
 \method{coef}{nc.hdqr}(object, s = NULL, type = c("coefficients", "nonzero"), ...)
 }
 \arguments{
-\item{object}{Fitted `nc.hdqr()` object.}
+\item{object}{Fitted \code{nc.hdqr} object.}
 
-\item{s}{Values of the penalty parameter `lambda` for which coefficients are requested.
+\item{s}{Values of the penalty parameter \code{lambda} for which coefficients are requested.
 Defaults to the entire sequence used during the model fit.}
 
-\item{type}{Type of prediction required. Type `"coefficients"` computes the coefficients at the requested 
-values for `s`. Type `"nonzero"` returns a list of the indices of the nonzero coefficients for each 
+\item{type}{Type of prediction required. Type "coefficients" computes the coefficients at the requested 
+values for \code{s}. Type "nonzero" returns a list of the indices of the nonzero coefficients for each 
 value of \code{s}.}
 
 \item{...}{Not used.}
 }
 \value{
-Returns a matrix or vector of coefficients corresponding to the specified `lambda` values.
+Returns a matrix or vector of coefficients corresponding to the specified \code{lambda} values.
 }
 \description{
-Retrieves the coefficients at specified values of `lambda` from a fitted `nc.hdqr()` model.
+Retrieves the coefficients at specified values of \code{lambda} from a fitted \code{nc.hdqr} model.
 }
 \details{
-This function extracts coefficients for specified `lambda` values from a `nc.hdqr()` object.
-If `s`, the vector of `lambda` values, contains values not originally used in the model fitting,
-the `coef` function employs linear interpolation between the closest `lambda` values from the 
-original sequence to estimate coefficients at the new `lambda` values.
+This function extracts coefficients for specified \code{lambda} values from a \code{nc.hdqr} object.
+If \code{s}, the vector of \code{lambda} values, contains values not originally used in the model fitting,
+the \code{coef} function employs linear interpolation between the closest \code{lambda} values from the 
+original sequence to estimate coefficients at the new \code{lambda} values.
 }
 \examples{
 set.seed(315)

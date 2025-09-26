@@ -37,7 +37,7 @@ which is a list with the ingredients of the cross-validated fit.
  \item{lambda.1se}{The largest value of \code{lambda} such that error is within 1 standard error of the minimum.}
 }
 \description{
-Conducts k-fold cross-validation for the `nc.hdqr()` function.
+Conducts k-fold cross-validation for the \code{nc.hdqr} function.
 }
 \details{
 This function estimates the average cross-validation error and its standard error across folds. It is primarily used to 

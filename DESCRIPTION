@@ -1,14 +1,14 @@
 Package: hdqr
 Type: Package
 Title: Fast Algorithm for Penalized Quantile Regression
-Version: 1.0.1
-Date: 2025-02-05
+Version: 1.0.2
+Date: 2025-09-25
 Authors@R: c(
   person(given = "Qian", family = "Tang", role = c("aut", "cre"), email = "qian-tang@uiowa.edu"),
   person(given = "Yikai", family = "Zhang", role = "aut", email = "yikai-zhang@uiowa.edu"),
   person(given = "Boxiang", family = "Wang", role = "aut", email = "boxiang-wang@uiowa.edu"))
 Maintainer: Qian Tang <qian-tang@uiowa.edu>
-Description: Implements an efficient algorithm to fit and tune penalized quantile regression models using the generalized coordinate descent algorithm. Designed to handle high-dimensional datasets effectively, with emphasis on precision and computational efficiency. This package implements the algorithms proposed in Tang, Q., Zhang, Y., & Wang, B. (2022) <https://openreview.net/pdf?id=RvwMTDYTOb>.
+Description: Implements an efficient algorithm for fitting the entire regularization path of quantile regression models with elastic-net penalties using a generalized coordinate descent scheme. The framework also supports SCAD and MCP penalties. It is designed for high-dimensional datasets and emphasizes numerical accuracy and computational efficiency. This package implements the algorithms proposed in Tang, Q., Zhang, Y., & Wang, B. (2022) <https://openreview.net/pdf?id=RvwMTDYTOb>.
 License: GPL-2
 Encoding: UTF-8
 Depends: R (>= 3.5.0)

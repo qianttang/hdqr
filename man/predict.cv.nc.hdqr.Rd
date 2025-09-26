@@ -2,22 +2,22 @@
 % Please edit documentation in R/cv.nc.hdqr-methods.R
 \name{predict.cv.nc.hdqr}
 \alias{predict.cv.nc.hdqr}
-\title{Make Predictions from a `cv.nc.hdqr` Object}
+\title{Make Predictions from a \code{cv.nc.hdqr} Object}
 \usage{
 \method{predict}{cv.nc.hdqr}(object, newx, s = c("lambda.1se", "lambda.min"), ...)
 }
 \arguments{
-\item{object}{A fitted `cv.nc.hdqr()` object from which predictions are to be made.}
+\item{object}{A fitted \code{cv.nc.hdqr} object from which predictions are to be made.}
 
 \item{newx}{Matrix of new predictor values for which predictions are desired.
 This must be a matrix and is a required argument.}
 
-\item{s}{Specifies the value(s) of the penalty parameter `lambda` at which predictions
-are desired. The default is `s = "lambda.1se"`, representing the largest value of `lambda`
+\item{s}{Specifies the value(s) of the penalty parameter \code{lambda} at which predictions
+are desired. The default is \code{s = "lambda.1se"}, representing the largest value of \code{lambda}
 such that the cross-validation error estimate is within one standard error of the minimum.
-Alternatively, `s = "lambda.min"` can be used, corresponding to the minimum of the
-cross-validation error estimate. If `s` is numeric, these are taken as the actual values
-of `lambda` to use for predictions.}
+Alternatively, \code{s = "lambda.min"} can be used, corresponding to the minimum of the
+cross-validation error estimate. If \code{s} is numeric, these are taken as the actual values
+of \code{lambda} to use for predictions.}
 
 \item{...}{Not used.}
 }
@@ -26,8 +26,8 @@ Returns a matrix or vector of predicted values corresponding to the specified
   `lambda` values.
 }
 \description{
-Generates predictions using a fitted `cv.nc.hdqr()` object. This function utilizes the
-stored `nchdqr.fit` object and an optimal value of `lambda` determined during the
+Generates predictions using a fitted \code{cv.nc.hdqr} object. This function utilizes the
+stored \code{nchdqr.fit} object and an optimal value of \code{lambda} determined during the
 cross-validation process.
 }
 \examples{

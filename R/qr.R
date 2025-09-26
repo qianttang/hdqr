@@ -1,7 +1,7 @@
-#' Solve the linear quantile regression. The solution path is computed
+#' Fit the high-dimensional linear quantile regression with elasticnet regularization. The solution path is computed
 #' at a grid of values of tuning parameter \code{lambda}.
 #'
-#' @param x Matrix of predictors, of dimension (nobs * nvars);
+#' @param x Matrix of predictors, of dimension \eqn{n * p};
 #'   each row is an observation.
 #' @param y Response variable. The length is \eqn{n}.
 #' @param tau The quantile level \eqn{\tau}. The value must be
@@ -51,11 +51,11 @@
 #'   to be nonzero along the solution path. For example, once
 #'   \eqn{\beta} enters the model, no matter how many times it
 #'   exits or re-enters the model through the path, it will be
-#'   counted only once. Default is \code{min(dfmax*1.2, p)}.
+#'   counted only once. Default is \code{min(dfmax x 1.2, p)}.
 #' @param standardize Logical flag for variable standardization,
 #'   prior to fitting the model sequence. The coefficients are
 #'   always returned to the original scale. Default is \code{TRUE}.
-#' @param hval The smoothing index for \code{method='huber'}. Default is 0.125.
+#' @param hval The smoothing parameter. Default is 0.125.
 #' @param eps Stopping criterion.
 #' @param maxit Maximum number of iterates.
 #' @param sigma Penalty parameter appearing in the quadratic term
@@ -66,7 +66,7 @@
 #' Note that the objective function in the penalized quantile
 #' regression is
 #'   \deqn{1'\rho_{\tau}(y-X\beta-b_0))/N + \lambda_1\cdot|pf_1\circ\beta|_1 +
-#'     0.5*\lambda_2\cdot|\sqrt{pf_2}\circ\beta|^2,}
+#'     0.5*\lambda_2\cdot||\sqrt{pf_2}\circ\beta||^2,}
 #'   where \eqn{\rho_{\tau}} the quantile or check loss
 #'   and the penalty is a combination of weighted L1 and L2 terms and
 #'   \eqn{\circ} denotes the Hadmamard product.
@@ -80,7 +80,7 @@
 #' An object with S3 class \code{hdqr} consisting of
 #'   \item{call}{the call that produced this object}
 #'   \item{b0}{intercept sequence of length \code{length(lambda)}}
-#'   \item{beta}{a \code{p*length(lambda)} matrix of coefficients,
+#'   \item{beta}{a \code{nvars x length(lambda)} matrix of coefficients,
 #'               stored as a sparse matrix (\code{dgCMatrix} class,
 #'               the standard class for sparse numeric matrices in
 #'               the \code{Matrix} package.). To convert it into

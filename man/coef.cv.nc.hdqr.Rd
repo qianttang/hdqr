@@ -2,18 +2,18 @@
 % Please edit documentation in R/cv.nc.hdqr-methods.R
 \name{coef.cv.nc.hdqr}
 \alias{coef.cv.nc.hdqr}
-\title{Extract Coefficients from a `cv.nc.hdqr` Object}
+\title{Extract Coefficients from a \code{cv.nc.hdqr} Object}
 \usage{
 \method{coef}{cv.nc.hdqr}(object, s = c("lambda.1se", "lambda.min"), ...)
 }
 \arguments{
-\item{object}{A fitted `cv.nc.hdqr()` object from which coefficients are to be extracted.}
+\item{object}{A fitted \code{cv.nc.hdqr} object from which coefficients are to be extracted.}
 
-\item{s}{Specifies the `lambda` values at which coefficients are requested.
-The default is `s = "lambda.1se"`, representing the largest `lambda` such that the cross-validation
-error estimate is within one standard error of the minimum. Alternatively, `s = "lambda.min"`
-corresponds to the `lambda` yielding the minimum cross-validation error. If `s` is numeric, these
-values are directly used as the `lambda` values for coefficient extraction.}
+\item{s}{Specifies the \code{lambda} values at which coefficients are requested.
+The default is \code{s = "lambda.1se"}, representing the largest \code{lambda} such that the cross-validation
+error estimate is within one standard error of the minimum. Alternatively, \code{s = "lambda.min"}
+corresponds to the \code{lambda} yielding the minimum cross-validation error. If \code{s} is numeric, these
+values are directly used as the \code{lambda} values for coefficient extraction.}
 
 \item{...}{Not used.}
 }
@@ -21,8 +21,8 @@ values are directly used as the `lambda` values for coefficient extraction.}
 Returns a vector or matrix of coefficients corresponding to the specified `lambda` values.
 }
 \description{
-Retrieves coefficients at specified values of `lambda` from a fitted `cv.nc.hdqr()` model.
-Utilizes the stored `"nchdqr.fit"` object and the optimal `lambda` values determined during
+Retrieves coefficients at specified values of \code{lambda} from a fitted \code{cv.nc.hdqr} model.
+Utilizes the stored \code{nchdqr.fit} object and the optimal \code{lambda} values determined during
 the cross-validation process.
 }
 \examples{

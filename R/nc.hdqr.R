@@ -4,7 +4,7 @@
 #' such as SCAD or MCP. It allows for flexible control over the regularization parameters and 
 #' offers advanced options for initializing and optimizing the fit.
 #'
-#' @param x Matrix of predictors, with dimensions (nobs * nvars); each row represents an observation.
+#' @param x Matrix of predictors, with dimensions (nobs x nvars); each row represents an observation.
 #' @param y Response variable, with length \eqn{n}.
 #' @param tau The quantile level \eqn{\tau}, which must be in the range (0,1). Default is 0.5.
 #' @param lambda Optional user-supplied sequence of \code{lambda} values. If unspecified, the program 

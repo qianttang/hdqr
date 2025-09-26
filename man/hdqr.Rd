@@ -2,7 +2,7 @@
 % Please edit documentation in R/qr.R
 \name{hdqr}
 \alias{hdqr}
-\title{Solve the linear quantile regression. The solution path is computed
+\title{Fit the high-dimensional linear quantile regression with elasticnet regularization. The solution path is computed
 at a grid of values of tuning parameter \code{lambda}.}
 \usage{
 hdqr(
@@ -27,7 +27,7 @@ hdqr(
 )
 }
 \arguments{
-\item{x}{Matrix of predictors, of dimension (nobs * nvars);
+\item{x}{Matrix of predictors, of dimension \eqn{n * p};
 each row is an observation.}
 
 \item{y}{Response variable. The length is \eqn{n}.}
@@ -63,7 +63,7 @@ fitting the model to take advanage of the warm-start technique.}
 quadratic penalty of the coefficients. Unlike \code{lambda},
 only one value of \code{lambda2} is used for each fitting process.}
 
-\item{hval}{The smoothing index for \code{method='huber'}. Default is 0.125.}
+\item{hval}{The smoothing parameter. Default is 0.125.}
 
 \item{pf}{L1 penalty factor of length \eqn{p} used for the adaptive
 LASSO or adaptive elastic net. Separate L1 penalty weights can be
@@ -90,7 +90,7 @@ Default is \eqn{p+1}.}
 to be nonzero along the solution path. For example, once
 \eqn{\beta} enters the model, no matter how many times it
 exits or re-enters the model through the path, it will be
-counted only once. Default is \code{min(dfmax*1.2, p)}.}
+counted only once. Default is \code{min(dfmax x 1.2, p)}.}
 
 \item{standardize}{Logical flag for variable standardization,
 prior to fitting the model sequence. The coefficients are
@@ -109,7 +109,7 @@ of the augmented Lagrangian function. Must be positive.}
 An object with S3 class \code{hdqr} consisting of
   \item{call}{the call that produced this object}
   \item{b0}{intercept sequence of length \code{length(lambda)}}
-  \item{beta}{a \code{p*length(lambda)} matrix of coefficients,
+  \item{beta}{a \code{nvars x length(lambda)} matrix of coefficients,
               stored as a sparse matrix (\code{dgCMatrix} class,
               the standard class for sparse numeric matrices in
               the \code{Matrix} package.). To convert it into
@@ -121,14 +121,14 @@ An object with S3 class \code{hdqr} consisting of
   \item{jerr}{error flag, for warnings and errors, 0 if no error.}
 }
 \description{
-Solve the linear quantile regression. The solution path is computed
+Fit the high-dimensional linear quantile regression with elasticnet regularization. The solution path is computed
 at a grid of values of tuning parameter \code{lambda}.
 }
 \details{
 Note that the objective function in the penalized quantile
 regression is
   \deqn{1'\rho_{\tau}(y-X\beta-b_0))/N + \lambda_1\cdot|pf_1\circ\beta|_1 +
-    0.5*\lambda_2\cdot|\sqrt{pf_2}\circ\beta|^2,}
+    0.5*\lambda_2\cdot||\sqrt{pf_2}\circ\beta||^2,}
   where \eqn{\rho_{\tau}} the quantile or check loss
   and the penalty is a combination of weighted L1 and L2 terms and
   \eqn{\circ} denotes the Hadmamard product.

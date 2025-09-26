@@ -14,6 +14,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+# Overview
 
 This package provides tools for fitting elastic net penalized quantile regression.
 
@@ -25,8 +26,11 @@ The strengths and improvements that this package offers relative to other quanti
 
 * Active-set and warm-start strategies implemented to compute the solution path as \lambda_1 varies.
 
-For this getting-started vignette, first, we will randomly generate `x`, an input matrix of 
-predictors of dimension $n\times p$ and a response variable 'y'.
+* Flexible penalties. Elastic net by default; SCAD and MCP are also supported.
+
+# Quick Start
+
+For this getting-started vignette, first, we will randomly generate `x`, an input matrix of  predictors of dimension $n\times p$ and a response variable 'y'.
 
 ```{r}
 library(hdqr)

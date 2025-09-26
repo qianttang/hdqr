@@ -2,30 +2,30 @@
 % Please edit documentation in R/nc.hdqr-methods.R
 \name{predict.nc.hdqr}
 \alias{predict.nc.hdqr}
-\title{Make Predictions from a `nc.hdqr` Object}
+\title{Make Predictions from a \code{nc.hdqr} Object}
 \usage{
 \method{predict}{nc.hdqr}(object, newx, s = NULL, ...)
 }
 \arguments{
-\item{object}{Fitted `nc.hdqr()` object from which predictions are to be derived.}
+\item{object}{Fitted \code{nc.hdqr} object from which predictions are to be derived.}
 
 \item{newx}{Matrix of new predictor values for which predictions are desired.
 This must be a matrix and is a required argument.}
 
-\item{s}{Values of the penalty parameter `lambda` for which predictions are requested.
+\item{s}{Values of the penalty parameter \code{lambda} for which predictions are requested.
 Defaults to the entire sequence used during the model fit.}
 
 \item{...}{Not used.}
 }
 \value{
-Returns a vector or matrix of predicted values corresponding to the specified `lambda` values.
+Returns a vector or matrix of predicted values corresponding to the specified \code{lambda} values.
 }
 \description{
-Produces fitted values for new predictor data using a fitted `nc.hdqr()` object.
+Produces fitted values for new predictor data using a fitted \code{nc.hdqr} object.
 }
 \details{
-This function generates predictions at specified `lambda` values from a fitted `nc.hdqr()` object.
-It is essential to provide a new matrix of predictor values (`newx`) at which these predictions are to be made.
+This function generates predictions at specified \code{lambda} values from a fitted \code{nc.hdqr} object.
+It is essential to provide a new matrix of predictor values (\code{newx}) at which these predictions are to be made.
 }
 \examples{
 set.seed(315)

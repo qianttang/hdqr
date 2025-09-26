@@ -1,23 +1,23 @@
-#' Extract Model Coefficients from a `nc.hdqr` Object
+#' Extract Model Coefficients from a \code{nc.hdqr} Object
 #'
-#' Retrieves the coefficients at specified values of `lambda` from a fitted `nc.hdqr()` model.
+#' Retrieves the coefficients at specified values of \code{lambda} from a fitted \code{nc.hdqr} model.
 #'
-#' This function extracts coefficients for specified `lambda` values from a `nc.hdqr()` object.
-#' If `s`, the vector of `lambda` values, contains values not originally used in the model fitting,
-#' the `coef` function employs linear interpolation between the closest `lambda` values from the 
-#' original sequence to estimate coefficients at the new `lambda` values.
+#' This function extracts coefficients for specified \code{lambda} values from a \code{nc.hdqr} object.
+#' If \code{s}, the vector of \code{lambda} values, contains values not originally used in the model fitting,
+#' the \code{coef} function employs linear interpolation between the closest \code{lambda} values from the 
+#' original sequence to estimate coefficients at the new \code{lambda} values.
 #'
 #' @importFrom methods rbind2
-#' @param object Fitted `nc.hdqr()` object.
-#' @param s Values of the penalty parameter `lambda` for which coefficients are requested.
+#' @param object Fitted \code{nc.hdqr} object.
+#' @param s Values of the penalty parameter \code{lambda} for which coefficients are requested.
 #'   Defaults to the entire sequence used during the model fit.
-#' @param type Type of prediction required. Type `"coefficients"` computes the coefficients at the requested 
-#'   values for `s`. Type `"nonzero"` returns a list of the indices of the nonzero coefficients for each 
+#' @param type Type of prediction required. Type "coefficients" computes the coefficients at the requested 
+#'   values for \code{s}. Type "nonzero" returns a list of the indices of the nonzero coefficients for each 
 #'   value of \code{s}.
 #' @param ... Not used.
 #' @seealso \code{\link{nc.hdqr}}, \code{\link{predict.nc.hdqr}}
 #'
-#' @return Returns a matrix or vector of coefficients corresponding to the specified `lambda` values.
+#' @return Returns a matrix or vector of coefficients corresponding to the specified \code{lambda} values.
 #'
 #' @method coef nc.hdqr
 #' @export
@@ -58,22 +58,22 @@ coef.nc.hdqr <- function(object, s=NULL,
     return(nonzero(nbeta[-1, , drop=FALSE], bystep=TRUE))
 }
 
-#' Make Predictions from a `nc.hdqr` Object
+#' Make Predictions from a \code{nc.hdqr} Object
 #'
-#' Produces fitted values for new predictor data using a fitted `nc.hdqr()` object.
+#' Produces fitted values for new predictor data using a fitted \code{nc.hdqr} object.
 #'
-#' This function generates predictions at specified `lambda` values from a fitted `nc.hdqr()` object.
-#' It is essential to provide a new matrix of predictor values (`newx`) at which these predictions are to be made.
+#' This function generates predictions at specified \code{lambda} values from a fitted \code{nc.hdqr} object.
+#' It is essential to provide a new matrix of predictor values (\code{newx}) at which these predictions are to be made.
 #'
-#' @param object Fitted `nc.hdqr()` object from which predictions are to be derived.
+#' @param object Fitted \code{nc.hdqr} object from which predictions are to be derived.
 #' @param newx Matrix of new predictor values for which predictions are desired.
 #'   This must be a matrix and is a required argument.
-#' @param s Values of the penalty parameter `lambda` for which predictions are requested.
+#' @param s Values of the penalty parameter \code{lambda} for which predictions are requested.
 #'   Defaults to the entire sequence used during the model fit.
 #' @param ... Not used.
 #' @seealso \code{\link{nc.hdqr}}, \code{\link{coef.nc.hdqr}}
 #'
-#' @return Returns a vector or matrix of predicted values corresponding to the specified `lambda` values.
+#' @return Returns a vector or matrix of predicted values corresponding to the specified \code{lambda} values.
 #'
 #' @method predict nc.hdqr
 #' @export

@@ -18,7 +18,7 @@ nc.hdqr(
 )
 }
 \arguments{
-\item{x}{Matrix of predictors, with dimensions (nobs * nvars); each row represents an observation.}
+\item{x}{Matrix of predictors, with dimensions (nobs x nvars); each row represents an observation.}
 
 \item{y}{Response variable, with length \eqn{n}.}
 
